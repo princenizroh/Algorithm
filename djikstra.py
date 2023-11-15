@@ -31,7 +31,7 @@ class Graph(object):
         "Returns the value of an edge between two nodes."
         return self.graph[node1][node2]
 
-    def dijkstra(graph, start_node):
+    def dijkstra(self, graph, start_node):
         unvisited_node = list(graph.get_nodes())
 
         shortest_distance = {}
@@ -57,7 +57,7 @@ class Graph(object):
             unvisited_node.remove(current_min_node)
         return previous_nodes, shortest_distance
 
-    def print_result(previous_nodes, shortest_distance, start_node, target_node):
+    def print_result(self, previous_nodes, shortest_distance, start_node, target_node):
         path = []
         node = target_node
     
@@ -76,8 +76,8 @@ class Graph(object):
 nodes = ['A', 'B', 'C', 'D', 'E', 'F']
 init_graph = {'A': {'B': 3, 'C': 4, 'D': 5 , 'E' : 9}, 'B': {'C': 5}, 'D': {'C': 2, 'F': 3}, 'C': {'E': 2, 'F': 2}, 'E': {'F': 3}}
 my_graph = Graph(nodes, init_graph)
-previous_nodes, shortest_distance = Graph.dijkstra(my_graph, "A")
-print(Graph.print_result(previous_nodes, shortest_distance, start_node="A", target_node="F"))
+previous_nodes, shortest_distance = my_graph.dijkstra(my_graph, "A")
+my_graph.print_result(previous_nodes, shortest_distance, start_node="A", target_node="F")
 # nodes = ["Reykjavik", "Oslo", "Moscow", "London", "Rome", "Berlin", "Belgrade", "Athens"]
 
 # init_graph = {}
