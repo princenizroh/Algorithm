@@ -2,38 +2,93 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random as rd
 import pandas as pd
+from typing import List
 
 
-def function(x):
-    return x**3 + 3 * x**2 - 12
+def fitness_function(x):
+    return x / (x**2 + 1)
 
 
-class PSO_4:
+class fx_PSO:
     def __init__(
         self,
-        particle: list,
-        v: list,
-        c: list,
-        r: list,
+        particle: np.ndarray,
+        velocity: np.ndarray,
+        c: np.ndarray,
+        r: np.ndarray,
         w: float,
     ) -> None:
-        self._particles = particle
-        self._v = v
-        self._c = c
-        self._r = r
-        self._w = w
+        self.particle = particle
+        self.velocity = velocity
+        self.c = c
+        self.r = r
+        self.w = w
 
-        self.oldX = particle.copy()
-        self._pBest = particle.copy()
+        self.oldParticle = np.copy(particle)
+        self.pBest = np.copy(particle)
+        self.gBest = self.particle
 
-    def decideFunction(self) -> None:
-        pass
+    def decideFunction(self) -> List[float]:
+        fx = [fitness_function(x) for x in self.particle]
+        return fx
 
     def findGbest(self) -> None:
-        pass
+        fx = self.decideFunction()
+        self.gBest = self.particle[np.argmin(fx)]
 
-    def findePbest(self) -> None:
-        pass
+    def findPbest(self) -> None:
+        for i in range(len(self.particle)):
+            if fitness_function(self.particle[i]) < fitness_function(self.pBest[i]):
+                self.pBest[i] = self.particle[i]
+            else:
+                self.pBest[i] = self.oldParticle[i]
 
     def iterate(self, n) -> None:
         pass
+
+    def plot(self):
+        # Generate data for visualization
+        x_values = np.linspace(-5, 5, 100)
+        y_values = fitness_function(x_values)
+
+        # Plot the function
+        plt.plot(x_values, y_values, label="Fungsi Objektif", color="blue")
+
+        # Plot particle positions
+        plt.scatter(
+            self.particle,
+            fitness_function(self.particle),
+            color="red",
+            label="Posisi Partikel",
+        )
+
+        # Plot pBest positions
+        plt.scatter(
+            self.pBest, fitness_function(self.pBest), color="green", label="pBest"
+        )
+
+        # Plot gBest position
+        plt.scatter(
+            self.gBest, fitness_function(self.gBest), color="blue", label="gBest"
+        )
+
+        # Configuration
+        plt.title("Visualisasi PSO")
+        plt.xlabel("Posisi")
+        plt.ylabel("Nilai Fungsi Objektif")
+        plt.legend()
+        plt.grid(True)
+        plt.savefig("fx-PSO.png")
+        plt.show()
+
+
+particle = np.array([0.0, -3.0, -4.0])
+velocity = np.array([0.0, 0.0, 0.0])
+c = np.array([0.5, 1.0])
+r = np.array([0.5, 0.5])
+w = 1.0
+
+pso = fx_PSO(particle, velocity, c, r, w)
+
+# Visualisasi
+# pso.plot()
