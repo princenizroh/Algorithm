@@ -43,8 +43,41 @@ class fx_PSO:
             else:
                 self.pBest[i] = self.oldParticle[i]
 
+    def updateV(self) -> None:
+        for i in range(len(self.particle)):
+            self.velocity[i] = (
+                (self.w * self.velocity[i])
+                + (self.c[0] * self.r[0] * (self.pBest[i] - self.particle[i]))
+                + (self.c[1] * self.r[1] * (self.gBest - self.particle[i]))
+            )
+
+    def updateX(self) -> None:
+        for i in range(len(self.particle)):
+            self.oldParticle[i] = self.particle[i]
+            self.particle[i] = self.particle[i] + self.velocity[i]
+
     def iterate(self, n) -> None:
-        pass
+        print(f"itertion {0}")
+        print(f"x = {self.particle}")
+        print(f"v = {self.velocity}")
+        print()
+        print(f"pBest = {self.pBest}")
+        print(f"gBest = {self.gBest}")
+        print()
+
+        for j in range(n):
+            self.findGbest()
+            self.findPbest()
+            self.updateV()
+            self.updateX()
+
+            print(f"iteration {j+1}")
+            print(f"x = {self.particle}")
+            print(f"v = {self.velocity}")
+            print()
+            print(f"pBest = {self.pBest}")
+            print(f"gBest = {self.gBest}")
+            print()
 
     def plot(self):
         # Generate data for visualization
@@ -89,6 +122,6 @@ r = np.array([0.5, 0.5])
 w = 1.0
 
 pso = fx_PSO(particle, velocity, c, r, w)
-
+pso.iterate(3)
 # Visualisasi
 # pso.plot()
