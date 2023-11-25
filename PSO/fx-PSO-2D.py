@@ -15,7 +15,7 @@ def fitness_function(x, y):
     )
 
 
-class fx_PSO:
+class fx_PSO_2D:
     def __init__(
         self,
         particle_x: np.ndarray,
@@ -89,7 +89,7 @@ class fx_PSO:
             self.updateV()
 
             particle_xy = np.column_stack((self.particle_x, self.particle_y))
-            pBest_xy = np.column_stack((self.pBest_x, self.pBest_y))
+            # pBest_xy = np.column_stack((self.pBest_x, self.pBest_y))
             velocity_xy = np.column_stack((self.velocity_x, self.velocity_y))
             print(f"iteration {j+1}")
             print("Initialization")
@@ -97,7 +97,8 @@ class fx_PSO:
             print(f"fx = {self.decideFunction()}")
             print(f"fx(gBest) = {fitness_function(self.gBest_x, self.gBest_y)}")
             print(f"gBest (x,y) = {self.gBest_x, self.gBest_y}")
-            print(f"pBest (x,y) = {tuple(map(tuple,pBest_xy))}")
+            # print(f"pBest (x,y) = {tuple(map(tuple,pBest_xy))}")
+            print(f"pBest = {self.pBest_x, self.pBest_y}")
             print(f"velocity (x,y) = {tuple(map(tuple,velocity_xy))}")
             self.updateXY()
             updateXY = np.column_stack((self.particle_x, self.particle_y))
@@ -108,34 +109,19 @@ class fx_PSO:
         print(f"Minimum value of f(x) = {fitness_function(self.gBest_x, self.gBest_y)}")
 
 
-x = np.array([-5.12, 5.12])
-dimension = 3
-particle_x = np.array([1.0, 1.0, 2.0])
-particle_y = np.array([1.0, -1.0, -1.0])
-velocity_x = np.array([0.0, 0.0, 0.0])
-velocity_y = np.array([0.0, 0.0, 0.0])
-c = np.array([1.0, 0.5])
-r = np.array([0.5, 0.5])
-w = 1.0
+if __name__ == "__main__":
+    # xy_range = np.array([-5.12, 5.12])
+    # dimension = 3
+    # particle_x = np.random.uniform(xy_range[0], xy_range[1], dimension)
+    # particle_y = np.random.uniform(xy_range[0], xy_range[1], dimension)
+    particle_x = np.array([1.0, 1.0, 2.0])
+    particle_y = np.array([1.0, -1.0, -1.0])
+    velocity_x = np.array([0.0, 0.0, 0.0])
+    velocity_y = np.array([0.0, 0.0, 0.0])
+    c = np.array([1.0, 0.5])
+    # r = np.array([np.random.rand(), np.random.rand()])
+    r = np.array([0.5, 0.5])
+    w = 1.0
 
-pso = fx_PSO(particle_x, particle_y, velocity_x, velocity_y, c, r, w)
-pso.iterate(3)
-
-
-# a = np.array([1.0, 2.0, 3.0])
-# b = np.array([[1.0, 2.0], [3.0, 4.0]])
-# c = 2.0
-
-# print(np.multiply(a, c))
-
-
-# def debug():
-#     for i in range(len(particle_x)):
-#         print(particle_x)
-#         velocity = (
-#             (w * velocity_x)
-#             + c[0] * r[0] * (particle_x - particle_x)
-#             + c[1] * r[1] * (1 - particle_x)
-#         )
-#         print(velocity)
-# debug()
+    pso = fx_PSO_2D(particle_x, particle_y, velocity_x, velocity_y, c, r, w)
+    pso.iterate(3)
