@@ -97,7 +97,6 @@ class fx_PSO_2D:
         velocity_xy = np.column_stack((self.velocity_x, self.velocity_y))
 
         print(f"Beginning Value")
-        print("Initialization")
         print(f"Particles (x,y) = {tuple(map(tuple,particle_xy))} ")
         print(f"fx = {self.decideFunction()}")
         print(f"fx(gBest) = {fitness_function(self.gBest_x, self.gBest_y)}")
