@@ -103,6 +103,10 @@ class fx_PSO_2D:
         print(f"gBest (x,y) = {self.gBest_x, self.gBest_y}")
         print(f"pBest (x,y) = {tuple(map(tuple,pBest_xy))}")
         print(f"velocity (x,y) = {tuple(map(tuple,velocity_xy))}")
+        # Matrix of particle position (x,y)
+        updateXY = np.column_stack((self.particle_x, self.particle_y))
+
+        print(f"Update (x,y) = {tuple(map(tuple,updateXY))}")
         print()
         for j in range(n):
             self.findGbest()

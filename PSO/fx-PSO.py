@@ -72,6 +72,7 @@ class fx_PSO:
         print(f"gBest = {self.gBest}")
         print(f"pBest = {self.pBest}")
         print(f"v = {self.velocity}")
+        print(f"Update x = {self.particle}")
         print()
         for j in range(n):
             self.findGbest()
