@@ -117,6 +117,6 @@ r = np.array([0.5, 0.5])
 w = 1.0
 
 pso = fx_PSO(particle, velocity, c, r, w)
-pso.iterate(3)
+pso.iterate(5)
 # Visualisasi
-# pso.plot()
+pso.plot()
