@@ -77,7 +77,7 @@ class fx_PSO:
 
     def plot(self):
         # Generate data for visualization
-        x_values = np.linspace(-5, 5, 100)
+        x_values = np.linspace(-5, 5, 200)
         y_values = fitness_function(x_values)
 
         # Plot the function
@@ -117,7 +117,6 @@ velocity = np.zeros(3)
 c = np.array([np.random.rand(), np.random.rand()])
 r = np.array([0.5, 0.5])
 w = 1.0
-print(particle)
 pso = fx_PSO(particle, velocity, c, r, w)
 pso.iterate(3)
 # Visualisasi
