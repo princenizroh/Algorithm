@@ -1,7 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import random as rd
-import pandas as pd
 from typing import List
 
 
@@ -91,6 +89,22 @@ class fx_PSO_2D:
 
     # Method to iterate PSO
     def iterate(self, n) -> None:
+        self.findGbest()
+        self.findPbest()
+        # Matrix of particle, pBest, and velocity
+        particle_xy = np.column_stack((self.particle_x, self.particle_y))
+        pBest_xy = np.column_stack((self.pBest_x, self.pBest_y))
+        velocity_xy = np.column_stack((self.velocity_x, self.velocity_y))
+
+        print(f"Beginning Value")
+        print("Initialization")
+        print(f"Particles (x,y) = {tuple(map(tuple,particle_xy))} ")
+        print(f"fx = {self.decideFunction()}")
+        print(f"fx(gBest) = {fitness_function(self.gBest_x, self.gBest_y)}")
+        print(f"gBest (x,y) = {self.gBest_x, self.gBest_y}")
+        print(f"pBest (x,y) = {tuple(map(tuple,pBest_xy))}")
+        print(f"velocity (x,y) = {tuple(map(tuple,velocity_xy))}")
+        print()
         for j in range(n):
             self.findGbest()
             self.findPbest()

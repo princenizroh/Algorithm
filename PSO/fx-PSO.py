@@ -63,6 +63,16 @@ class fx_PSO:
 
     # Method to iterate PSO
     def iterate(self, n) -> None:
+        self.findGbest()
+        self.findPbest()
+        print(f"Beginning Value")
+        print(f"x = {self.particle}")
+        print(f"fx = {fitness_function(self.pBest)}")
+        print(f"fx(gBest) = {fitness_function(self.gBest)}")
+        print(f"gBest = {self.gBest}")
+        print(f"pBest = {self.pBest}")
+        print(f"v = {self.velocity}")
+        print()
         for j in range(n):
             self.findGbest()
             self.findPbest()
@@ -126,7 +136,7 @@ if __name__ == "__main__":
     x = np.array([-5, 4])  # Range of particle (xMin, xMax)
     dimension = 3  # Dimension of particle
     particle = np.random.uniform(x[0], x[1], dimension)  # Generate random particle
-    velocity = np.zeros(dimension)  # Initialize velocity
+    velocity = np.array([0.0, 0.0, 0.0])  # Initialize velocity
     c = np.array([0.5, 1.0])  # Acceleration coefficient
     r = np.array(
         [np.random.rand(), np.random.rand()]
