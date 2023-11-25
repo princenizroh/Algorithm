@@ -1,15 +1,15 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import random as rd
-import pandas as pd
 from typing import List
 
 
+# Function to be optimized
 def fitness_function(x):
     return x**3 + 3 * x**2 - 12
 
 
 class fx_PSO:
+    # Constructor
     def __init__(
         self,
         particle: np.ndarray,
@@ -28,14 +28,17 @@ class fx_PSO:
         self.pBest = np.copy(particle)
         self.gBest = self.particle
 
+    # Method to decide function value of particle position (x)
     def decideFunction(self) -> List[float]:
         fx = [fitness_function(x) for x in self.particle]
         return fx
 
+    # Method to find gBest value of particle position (x)
     def findGbest(self) -> None:
         fx = self.decideFunction()
         self.gBest = self.particle[np.argmin(fx)]
 
+    # Method to find pBest value of particle position (x)
     def findPbest(self) -> None:
         for i in range(len(self.particle)):
             if fitness_function(self.particle[i]) < fitness_function(self.pBest[i]):
@@ -43,6 +46,7 @@ class fx_PSO:
             else:
                 self.pBest[i] = self.oldParticle[i]
 
+    # Method to update velocity of particle
     def updateV(self) -> None:
         for i in range(len(self.particle)):
             self.velocity[i] = (
@@ -51,11 +55,13 @@ class fx_PSO:
                 + (self.c[1] * self.r[1] * (self.gBest - self.particle[i]))
             )
 
+    # Method to update position of particle
     def updateX(self) -> None:
         for i in range(len(self.particle)):
             self.oldParticle[i] = self.particle[i]
             self.particle[i] = self.particle[i] + self.velocity[i]
 
+    # Method to iterate PSO
     def iterate(self, n) -> None:
         for j in range(n):
             self.findGbest()
@@ -75,6 +81,7 @@ class fx_PSO:
             print()
         print(f"Minimum value of f(x) = {fitness_function(self.gBest)}")
 
+    # Method to display visualization of PSO
     def plot(self):
         # Generate data for visualization
         x_values = np.linspace(-5, 5, 200)
@@ -111,13 +118,14 @@ class fx_PSO:
         plt.show()
 
 
-xMin, xMax = -5, 5
-particle = np.random.uniform(xMin, xMax, 3)
-velocity = np.zeros(3)
-c = np.array([np.random.rand(), np.random.rand()])
-r = np.array([0.5, 0.5])
-w = 1.0
-pso = fx_PSO(particle, velocity, c, r, w)
-pso.iterate(3)
+x = np.array([-5, 5])
+dimension = 3  # Dimension of particle
+particle = np.random.uniform(x[0], x[1], dimension)  # Generate random particle
+velocity = np.zeros(dimension)  # Generate velocity
+c = np.array([0.5, 1.0])  # Acceleration coefficient
+r = np.array([np.random.rand(), np.random.rand()])  # Random number (Between 0 and 1)
+w = 1.0  # Inertia weight
+pso = fx_PSO(particle, velocity, c, r, w)  # Create object
+pso.iterate(3)  # Iterate PSO
 # Visualisasi
-pso.plot()
+pso.plot()  # Display visualization
