@@ -114,10 +114,10 @@ class fx_PSO:
 xMin, xMax = -5, 5
 particle = np.random.uniform(xMin, xMax, 3)
 velocity = np.zeros(3)
-c = np.array([0.5, 1.0])
+c = np.array([np.random.rand(), np.random.rand()])
 r = np.array([0.5, 0.5])
 w = 1.0
-
+print(particle)
 pso = fx_PSO(particle, velocity, c, r, w)
 pso.iterate(3)
 # Visualisasi
