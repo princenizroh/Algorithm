@@ -6,7 +6,7 @@ from typing import List
 
 
 def fitness_function(x):
-    return x / (x**2 + 1)
+    return x**3 + 3 * x**2 - 12
 
 
 class fx_PSO:
@@ -73,6 +73,7 @@ class fx_PSO:
             self.updateX()
             print(f"Update x = {self.particle}")
             print()
+        print(f"Minimum value of f(x) = {fitness_function(self.gBest)}")
 
     def plot(self):
         # Generate data for visualization
@@ -110,13 +111,13 @@ class fx_PSO:
         plt.show()
 
 
-particle = np.array([0.0, -3.0, -4.0])
-velocity = np.array([0.0, 0.0, 0.0])
+particle = np.random.uniform(-5, 5, 3)
+velocity = np.zeros(3)
 c = np.array([0.5, 1.0])
 r = np.array([0.5, 0.5])
 w = 1.0
 
 pso = fx_PSO(particle, velocity, c, r, w)
-pso.iterate(5)
+pso.iterate(3)
 # Visualisasi
 pso.plot()
