@@ -118,7 +118,7 @@ class fx_PSO:
         plt.show()
 
 
-x = np.array([-5, 5])  # Range of particle (xMin, xMax)
+x = np.array([-5, 4])  # Range of particle (xMin, xMax)
 dimension = 3  # Dimension of particle
 particle = np.random.uniform(x[0], x[1], dimension)  # Generate random particle
 velocity = np.zeros(dimension)  # Generate velocity
