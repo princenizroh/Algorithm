@@ -57,26 +57,21 @@ class fx_PSO:
             self.particle[i] = self.particle[i] + self.velocity[i]
 
     def iterate(self, n) -> None:
-        print(f"itertion {0}")
-        print(f"x = {self.particle}")
-        print(f"v = {self.velocity}")
-        print()
-        print(f"pBest = {self.pBest}")
-        print(f"gBest = {self.gBest}")
-        print()
-
         for j in range(n):
             self.findGbest()
             self.findPbest()
             self.updateV()
-            self.updateX()
 
             print(f"iteration {j+1}")
+            print("Initialization")
             print(f"x = {self.particle}")
-            print(f"v = {self.velocity}")
-            print()
-            print(f"pBest = {self.pBest}")
+            print(f"fx = {fitness_function(self.pBest)}")
+            print(f"fx(gBest) = {fitness_function(self.gBest)}")
             print(f"gBest = {self.gBest}")
+            print(f"pBest = {self.pBest}")
+            print(f"v = {self.velocity}")
+            self.updateX()
+            print(f"Update x = {self.particle}")
             print()
 
     def plot(self):
