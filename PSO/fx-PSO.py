@@ -14,15 +14,15 @@ class fx_PSO:
         self,
         particle: np.ndarray,
         velocity: np.ndarray,
-        c: np.ndarray,
-        r: np.ndarray,
-        w: float,
+        acceleration_coefficients: np.ndarray,
+        random: np.ndarray,
+        inertia_weight: float,
     ) -> None:
         self.particle = particle
         self.velocity = velocity
-        self.c = c
-        self.r = r
-        self.w = w
+        self.c = acceleration_coefficients
+        self.r = random
+        self.w = inertia_weight
 
         self.oldParticle = np.copy(particle)
         self.pBest = np.copy(particle)
@@ -76,15 +76,18 @@ class fx_PSO:
             print(f"gBest = {self.gBest}")
             print(f"pBest = {self.pBest}")
             print(f"v = {self.velocity}")
+
             self.updateX()
+
             print(f"Update x = {self.particle}")
             print()
+
         print(f"Minimum value of f(x) = {fitness_function(self.gBest)}")
 
     # Method to display visualization of PSO
     def plot(self):
         # Generate data for visualization
-        x_values = np.linspace(-5, 5, 200)
+        x_values = np.linspace(-5, 4, 3)
         y_values = fitness_function(x_values)
 
         # Plot the function
@@ -118,14 +121,18 @@ class fx_PSO:
         plt.show()
 
 
-x = np.array([-5, 4])  # Range of particle (xMin, xMax)
-dimension = 3  # Dimension of particle
-particle = np.random.uniform(x[0], x[1], dimension)  # Generate random particle
-velocity = np.zeros(dimension)  # Generate velocity
-c = np.array([0.5, 1.0])  # Acceleration coefficient
-r = np.array([np.random.rand(), np.random.rand()])  # Random number (Between 0 and 1)
-w = 1.0  # Inertia weight
-pso = fx_PSO(particle, velocity, c, r, w)  # Create object
-pso.iterate(3)  # Iterate PSO
-# Visualisasi
-pso.plot()  # Display visualization
+# Main program
+if __name__ == "__main__":
+    x = np.array([-5, 4])  # Range of particle (xMin, xMax)
+    dimension = 3  # Dimension of particle
+    particle = np.random.uniform(x[0], x[1], dimension)  # Generate random particle
+    velocity = np.zeros(dimension)  # Initialize velocity
+    c = np.array([0.5, 1.0])  # Acceleration coefficient
+    r = np.array(
+        [np.random.rand(), np.random.rand()]
+    )  # Random number (Between 0 and 1)
+    w = 1.0  # Inertia weight
+    pso = fx_PSO(particle, velocity, c, r, w)  # Create object
+    pso.iterate(3)  # Iterate PSO
+    # Visualisasi
+    pso.plot()  # Display visualization
