@@ -111,7 +111,8 @@ class fx_PSO:
         plt.show()
 
 
-particle = np.random.uniform(-5, 5, 3)
+xMin, xMax = -5, 5
+particle = np.random.uniform(xMin, xMax, 3)
 velocity = np.zeros(3)
 c = np.array([0.5, 1.0])
 r = np.array([0.5, 0.5])
