@@ -38,8 +38,22 @@ class fx_PSO_2D:
         self.oldParticle_y = np.copy(self.particle_y)
         self.pBest_x = np.copy(particle_x)
         self.pBest_y = np.copy(particle_y)
-        self.gBest_x = self.particle_x
-        self.gBest_y = self.particle_y
+        self.gBest_x = self.particle_x[
+            np.argmin(
+                [
+                    fitness_function(x, y)
+                    for x, y in zip(self.particle_x, self.particle_y)
+                ]
+            )
+        ]
+        self.gBest_y = self.particle_y[
+            np.argmin(
+                [
+                    fitness_function(x, y)
+                    for x, y in zip(self.particle_x, self.particle_y)
+                ]
+            )
+        ]
 
     # Method to decide function value of particle position (x,y)
     def decideFunction(self) -> List[float]:
@@ -50,8 +64,11 @@ class fx_PSO_2D:
     def findGbest(self) -> None:
         fx = self.decideFunction()
         index = np.argmin(fx)
-        self.gBest_x = self.particle_x[index]
-        self.gBest_y = self.particle_y[index]
+        if fitness_function(
+            self.particle_x[np.argmin(fx)], self.particle_y[np.argmin(fx)]
+        ) < fitness_function(self.gBest_x, self.gBest_y):
+            self.gBest_x = self.particle_x[index]
+            self.gBest_y = self.particle_y[index]
 
     # Method to find pBest value of particle position (x,y)
     def findPbest(self) -> None:
@@ -99,6 +116,9 @@ class fx_PSO_2D:
         print(f"Beginning Value")
         print(f"Particles (x,y) = {tuple(map(tuple,particle_xy))} ")
         print(f"fx = {self.decideFunction()}")
+        print(
+            f"decide fx = {[fitness_function(x,y) for x,y in zip(self.particle_x, self.particle_y)]}"
+        )
         print(f"fx(gBest) = {fitness_function(self.gBest_x, self.gBest_y)}")
         print(f"gBest (x,y) = {self.gBest_x, self.gBest_y}")
         print(f"pBest (x,y) = {tuple(map(tuple,pBest_xy))}")
@@ -121,6 +141,9 @@ class fx_PSO_2D:
             print(f"iteration {j+1}")
             print("Initialization")
             print(f"Particles (x,y) = {tuple(map(tuple,particle_xy))} ")
+            print(
+                f"decide fx = {[fitness_function(x,y) for x,y in zip(self.particle_x, self.particle_y)]}"
+            )
             print(f"fx = {self.decideFunction()}")
             print(f"fx(gBest) = {fitness_function(self.gBest_x, self.gBest_y)}")
             print(f"gBest (x,y) = {self.gBest_x, self.gBest_y}")

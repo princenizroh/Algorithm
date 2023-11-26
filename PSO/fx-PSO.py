@@ -26,7 +26,9 @@ class fx_PSO:
 
         self.oldParticle = np.copy(particle)
         self.pBest = np.copy(particle)
-        self.gBest = self.particle
+        self.gBest = self.particle[
+            np.argmin([fitness_function(x) for x in self.particle])
+        ]
 
     # Method to decide function value of particle position (x)
     def decideFunction(self) -> List[float]:
@@ -36,7 +38,10 @@ class fx_PSO:
     # Method to find gBest value of particle position (x)
     def findGbest(self) -> None:
         fx = self.decideFunction()
-        self.gBest = self.particle[np.argmin(fx)]
+        if fitness_function(self.particle[np.argmin(fx)]) < fitness_function(
+            self.gBest
+        ):
+            self.gBest = np.copy(self.particle[np.argmin(fx)])
 
     # Method to find pBest value of particle position (x)
     def findPbest(self) -> None:
@@ -67,6 +72,7 @@ class fx_PSO:
         self.findPbest()
         print(f"Beginning Value")
         print(f"x = {self.particle}")
+        print(f"decide fx = {[fitness_function(x) for x in self.particle]}")
         print(f"fx = {fitness_function(self.pBest)}")
         print(f"fx(gBest) = {fitness_function(self.gBest)}")
         print(f"gBest = {self.gBest}")
@@ -82,6 +88,7 @@ class fx_PSO:
             print(f"iteration {j+1}")
             print("Initialization")
             print(f"x = {self.particle}")
+            print(f"decide fx = {[fitness_function(x) for x in self.particle]}")
             print(f"fx = {fitness_function(self.pBest)}")
             print(f"fx(gBest) = {fitness_function(self.gBest)}")
             print(f"gBest = {self.gBest}")
@@ -137,7 +144,7 @@ if __name__ == "__main__":
     x = np.array([-5, 4])  # Range of particle (xMin, xMax)
     dimension = 3  # Dimension of particle
     particle = np.random.uniform(x[0], x[1], dimension)  # Generate random particle
-    velocity = np.array([0.0, 0.0, 0.0])  # Initialize velocity
+    velocity = np.zeros(dimension)  # Initialize velocity
     c = np.array([0.5, 1.0])  # Acceleration coefficient
     r = np.array(
         [np.random.rand(), np.random.rand()]
