@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from typing import List
 
 
 # Function to be optimized
@@ -10,7 +9,7 @@ def fitness_function(x, y):
         + x**2
         - (10 * np.cos(2 * np.pi * x))
         + y**2
-        - (10 * np.cos(2 * np.pi * x))
+        - (10 * np.cos(2 * np.pi * y))
     )
 
 
@@ -22,7 +21,7 @@ class fx_PSO_2D:
         particle_y: np.ndarray,
         velocity_x: np.ndarray,
         velocity_y: np.ndarray,
-        accelerationn_coefficients: np.ndarray,
+        acceleration_coefficients: np.ndarray,
         random: np.ndarray,
         inertia_weight: float,
     ) -> None:
@@ -30,57 +29,70 @@ class fx_PSO_2D:
         self.particle_y = particle_y
         self.velocity_x = velocity_x
         self.velocity_y = velocity_y
-        self.c = accelerationn_coefficients
+        self.c = acceleration_coefficients
         self.r = random
         self.w = inertia_weight
 
         self.oldParticle_x = np.copy(self.particle_x)
         self.oldParticle_y = np.copy(self.particle_y)
-        self.pBest_x = np.copy(particle_x)
-        self.pBest_y = np.copy(particle_y)
-        self.gBest_x = self.particle_x[
-            np.argmin(
-                [
-                    fitness_function(x, y)
-                    for x, y in zip(self.particle_x, self.particle_y)
-                ]
-            )
-        ]
-        self.gBest_y = self.particle_y[
-            np.argmin(
-                [
-                    fitness_function(x, y)
-                    for x, y in zip(self.particle_x, self.particle_y)
-                ]
-            )
+        self.pBest_x = []
+        self.pBest_y = []
+        self.gBest_x = None
+        self.gBest_y = None
+
+    # Method to determine fitness function value of particle position (x,y)
+    def determineFunction(self) -> list[float]:
+        return [
+            fitness_function(x, y) for x, y in zip(self.particle_x, self.particle_y)
         ]
 
-    # Method to decide function value of particle position (x,y)
-    def decideFunction(self) -> List[float]:
-        fx = [fitness_function(x, y) for x, y in zip(self.particle_x, self.particle_y)]
-        return fx
+    # Method to evaluate pBest fitness value
+    def evaluatePbestFitness(self) -> list[float]:
+        return [fitness_function(p, q) for p, q in zip(self.pBest_x, self.pBest_y)]
 
     # Method to find gBest value of particle position (x,y)
     def findGbest(self) -> None:
-        fx = self.decideFunction()
-        index = np.argmin(fx)
-        if fitness_function(
-            self.particle_x[np.argmin(fx)], self.particle_y[np.argmin(fx)]
-        ) < fitness_function(self.gBest_x, self.gBest_y):
-            self.gBest_x = self.particle_x[index]
-            self.gBest_y = self.particle_y[index]
+        if not self.gBest_x and not self.gBest_y:
+            self.gBest_x = self.particle_x[
+                np.argmin(
+                    [
+                        fitness_function(x, y)
+                        for x, y in zip(self.particle_x, self.particle_y)
+                    ]
+                )
+            ]
+            self.gBest_y = self.particle_y[
+                np.argmin(
+                    [
+                        fitness_function(x, y)
+                        for x, y in zip(self.particle_x, self.particle_y)
+                    ]
+                )
+            ]
+        else:
+            fx = self.determineFunction()
+            index = np.argmin(fx)
+            if fitness_function(
+                self.particle_x[np.argmin(fx)], self.particle_y[np.argmin(fx)]
+            ) < fitness_function(self.gBest_x, self.gBest_y):
+                self.gBest_x = self.particle_x[index]
+                self.gBest_y = self.particle_y[index]
 
     # Method to find pBest value of particle position (x,y)
     def findPbest(self) -> None:
+        if len(self.pBest_x) < len(self.particle_x):
+            self.pBest_x.extend(
+                [np.copy(p) for p in self.particle_x[len(self.pBest_x) :]]
+            )
+            self.pBest_y.extend(
+                [np.copy(q) for q in self.particle_y[len(self.pBest_y) :]]
+            )
         for i in range(len(self.particle_x)):
             if fitness_function(
                 self.particle_x[i], self.particle_y[i]
             ) < fitness_function(self.pBest_x[i], self.pBest_y[i]):
                 self.pBest_x[i] = self.particle_x[i]
                 self.pBest_y[i] = self.particle_y[i]
-            else:
-                self.pBest_x[i] = self.oldParticle_x[i]
-                self.pBest_y[i] = self.oldParticle_y[i]
 
     # Method to update velocity of particle
     def updateV(self) -> None:
@@ -106,8 +118,6 @@ class fx_PSO_2D:
 
     # Method to iterate PSO
     def iterate(self, n) -> None:
-        self.findGbest()
-        self.findPbest()
         # Matrix of particle, pBest, and velocity
         particle_xy = np.column_stack((self.particle_x, self.particle_y))
         pBest_xy = np.column_stack((self.pBest_x, self.pBest_y))
@@ -115,14 +125,14 @@ class fx_PSO_2D:
 
         print(f"Beginning Value")
         print(f"Particles (x,y) = {tuple(map(tuple,particle_xy))} ")
-        print(f"fx = {self.decideFunction()}")
+        print(f"Determine fx = {self.determineFunction()}")
+        print(f"fx(pBest) = {self.evaluatePbestFitness()}")
         print(
-            f"decide fx = {[fitness_function(x,y) for x,y in zip(self.particle_x, self.particle_y)]}"
+            f"fx(gBest) = {fitness_function(self.gBest_x, self.gBest_y) if self.gBest_x and self.gBest_y is not None else None}"
         )
-        print(f"fx(gBest) = {fitness_function(self.gBest_x, self.gBest_y)}")
-        print(f"gBest (x,y) = {self.gBest_x, self.gBest_y}")
-        print(f"pBest (x,y) = {tuple(map(tuple,pBest_xy))}")
-        print(f"velocity (x,y) = {tuple(map(tuple,velocity_xy))}")
+        print(f"Global Best (x,y) = {self.gBest_x, self.gBest_y}")
+        print(f"Personal Best (x,y) = {pBest_xy}")
+        print(f"Velocity (x,y) = {tuple(map(tuple,velocity_xy))}")
         # Matrix of particle position (x,y)
         updateXY = np.column_stack((self.particle_x, self.particle_y))
 
@@ -141,14 +151,12 @@ class fx_PSO_2D:
             print(f"iteration {j+1}")
             print("Initialization")
             print(f"Particles (x,y) = {tuple(map(tuple,particle_xy))} ")
-            print(
-                f"decide fx = {[fitness_function(x,y) for x,y in zip(self.particle_x, self.particle_y)]}"
-            )
-            print(f"fx = {self.decideFunction()}")
+            print(f"Determine fx = {self.determineFunction()}")
+            print(f"fx(pBest) = {self.evaluatePbestFitness()}")
             print(f"fx(gBest) = {fitness_function(self.gBest_x, self.gBest_y)}")
-            print(f"gBest (x,y) = {self.gBest_x, self.gBest_y}")
-            print(f"pBest (x,y) = {tuple(map(tuple,pBest_xy))}")
-            print(f"velocity (x,y) = {tuple(map(tuple,velocity_xy))}")
+            print(f"Global Best (x,y) = {self.gBest_x, self.gBest_y}")
+            print(f"Personal Best (x,y) = {tuple(map(tuple,pBest_xy))}")
+            print(f"Velocity (x,y) = {tuple(map(tuple,velocity_xy))}")
             self.updateXY()
 
             # Matrix of particle position (x,y)

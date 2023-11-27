@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from typing import List
 
 
 # Function to be optimized
@@ -25,31 +24,37 @@ class fx_PSO:
         self.w = inertia_weight
 
         self.oldParticle = np.copy(particle)
-        self.pBest = np.copy(particle)
-        self.gBest = self.particle[
-            np.argmin([fitness_function(x) for x in self.particle])
-        ]
+        self.pBest = []
+        self.gBest = None
 
-    # Method to decide function value of particle position (x)
-    def decideFunction(self) -> List[float]:
-        fx = [fitness_function(x) for x in self.particle]
-        return fx
+    # Method to determine fitness function value of particle position (x)
+    def determineFunction(self) -> list[float]:
+        return [fitness_function(x) for x in self.particle]
+
+    # Method to evaluate pBest fitness value
+    def evaluatePbestFitness(self) -> list[float]:
+        return [fitness_function(p) for p in self.pBest]
 
     # Method to find gBest value of particle position (x)
     def findGbest(self) -> None:
-        fx = self.decideFunction()
-        if fitness_function(self.particle[np.argmin(fx)]) < fitness_function(
-            self.gBest
-        ):
-            self.gBest = np.copy(self.particle[np.argmin(fx)])
+        if not self.gBest:
+            self.gBest = self.particle[
+                np.argmin([fitness_function(x) for x in self.particle])
+            ]
+        else:
+            fx = self.determineFunction()
+            if fitness_function(self.particle[np.argmin(fx)]) < fitness_function(
+                self.gBest
+            ):
+                self.gBest = np.copy(self.particle[np.argmin(fx)])
 
     # Method to find pBest value of particle position (x)
     def findPbest(self) -> None:
+        if len(self.pBest) < len(self.particle):
+            self.pBest.extend([np.copy(p) for p in self.particle[len(self.pBest) :]])
         for i in range(len(self.particle)):
             if fitness_function(self.particle[i]) < fitness_function(self.pBest[i]):
                 self.pBest[i] = self.particle[i]
-            else:
-                self.pBest[i] = self.oldParticle[i]
 
     # Method to update velocity of particle
     def updateV(self) -> None:
@@ -68,16 +73,16 @@ class fx_PSO:
 
     # Method to iterate PSO
     def iterate(self, n) -> None:
-        self.findGbest()
-        self.findPbest()
         print(f"Beginning Value")
-        print(f"x = {self.particle}")
-        print(f"decide fx = {[fitness_function(x) for x in self.particle]}")
-        print(f"fx = {fitness_function(self.pBest)}")
-        print(f"fx(gBest) = {fitness_function(self.gBest)}")
-        print(f"gBest = {self.gBest}")
-        print(f"pBest = {self.pBest}")
-        print(f"v = {self.velocity}")
+        print(f"Particle (x) = {self.particle}")
+        print(f"Determine fx = {self.determineFunction()}")
+        print(f"fx(pBest) = {self.evaluatePbestFitness()}")
+        print(
+            f"fx(gBest) = {fitness_function(self.gBest) if self.gBest is not None else None}"
+        )
+        print(f"Global Best = {self.gBest}")
+        print(f"Personal Best = {self.pBest}")
+        print(f"Velocity = {self.velocity}")
         print(f"Update x = {self.particle}")
         print()
         for j in range(n):
@@ -87,17 +92,17 @@ class fx_PSO:
 
             print(f"iteration {j+1}")
             print("Initialization")
-            print(f"x = {self.particle}")
-            print(f"decide fx = {[fitness_function(x) for x in self.particle]}")
-            print(f"fx = {fitness_function(self.pBest)}")
+            print(f"Particle (x) = {self.particle}")
+            print(f"Determine fx = {self.determineFunction()}")
+            print(f"fx(pBest) = {self.evaluatePbestFitness()}")
             print(f"fx(gBest) = {fitness_function(self.gBest)}")
-            print(f"gBest = {self.gBest}")
-            print(f"pBest = {self.pBest}")
-            print(f"v = {self.velocity}")
+            print(f"Global Best = {self.gBest}")
+            print(f"Personal Best = {self.pBest}")
+            print(f"Velocity = {self.velocity}")
 
             self.updateX()
 
-            print(f"Update x = {self.particle}")
+            print(f"Update particlex = {self.particle}")
             print()
 
         print(f"Minimum value of f(x) = {fitness_function(self.gBest)}")
@@ -120,9 +125,7 @@ class fx_PSO:
         )
 
         # Plot pBest positions
-        plt.scatter(
-            self.pBest, fitness_function(self.pBest), color="green", label="pBest"
-        )
+        plt.scatter(self.pBest, self.determineFunction(), color="green", label="pBest")
 
         # Plot gBest position
         plt.scatter(
