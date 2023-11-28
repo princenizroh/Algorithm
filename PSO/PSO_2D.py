@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from tabulate import tabulate
 
 
 # Function to be optimized
@@ -10,7 +9,7 @@ def fitness_function(x, y):
         + x**2
         - (10 * np.cos(2 * np.pi * x))
         + y**2
-        - (10 * np.cos(2 * np.pi * y))
+        - (10 * np.cos(2 * np.pi * x))
     )
 
 
@@ -38,16 +37,17 @@ class fx_PSO_2D:
         self.oldParticle_y = np.copy(self.particle_y)
         self.pBest_x = []
         self.pBest_y = []
+
         self.gBest_x = None
         self.gBest_y = None
 
-    # Method to determine fitness function value of particle position (x,y)
+    # Method to decide function value of particle position (x,y)
     def determineFunction(self) -> list[float]:
         return [
             fitness_function(x, y) for x, y in zip(self.particle_x, self.particle_y)
         ]
 
-    # Method to evaluate pBest fitness value
+    # Method to find global fitness value
     def evaluatePbestFitness(self) -> list[float]:
         return [fitness_function(p, q) for p, q in zip(self.pBest_x, self.pBest_y)]
 
@@ -119,45 +119,54 @@ class fx_PSO_2D:
 
     # Method to iterate PSO
     def iterate(self, n) -> None:
-        self.print_table("Beginning")
+        # Matrix of particle, pBest, and velocity
+        particle_xy = np.column_stack((self.particle_x, self.particle_y))
+        pBest_xy = np.column_stack((self.pBest_x, self.pBest_y))
+        velocity_xy = np.column_stack((self.velocity_x, self.velocity_y))
+
+        print(f"Beginning Value")
+        print(f"Particles (x,y) = {tuple(map(tuple,particle_xy))} ")
+        print(f"Determine fx = {self.determineFunction()}")
+        print(f"fx(pBest) = {self.evaluatePbestFitness()}")
+        print(
+            f"fx(gBest) = {fitness_function(self.gBest_x, self.gBest_y) if self.gBest_x and self.gBest_y is not None else None}"
+        )
+        print(f"Global Best (x,y) = {self.gBest_x, self.gBest_y}")
+        print(f"Personal Best (x,y) = {pBest_xy}")
+        print(f"velocity (x,y) = {tuple(map(tuple,velocity_xy))}")
+        # Matrix of particle position (x,y)
+        updateXY = np.column_stack((self.particle_x, self.particle_y))
+
+        print(f"Update (x,y) = {tuple(map(tuple,updateXY))}")
         print()
         for j in range(n):
             self.findGbest()
             self.findPbest()
             self.updateV()
 
-            print(f"Iteration {j + 1}")
-            self.print_table(j + 1)
+            # Matrix of particle, pBest, and velocity
+            particle_xy = np.column_stack((self.particle_x, self.particle_y))
+            pBest_xy = np.column_stack((self.pBest_x, self.pBest_y))
+            velocity_xy = np.column_stack((self.velocity_x, self.velocity_y))
+
+            print(f"iteration {j+1}")
+            print("Initialization")
+            print(f"Particles (x,y) = {tuple(map(tuple,particle_xy))} ")
+            print(f"Determine fx = {self.determineFunction()}")
+            print(f"fx(pBest) = {self.evaluatePbestFitness()}")
+            print(f"fx(gBest) = {fitness_function(self.gBest_x, self.gBest_y)}")
+            print(f"Global Best (x,y) = {self.gBest_x, self.gBest_y}")
+            print(f"Personal Best (x,y) = {tuple(map(tuple,pBest_xy))}")
+            print(f"Velocity (x,y) = {tuple(map(tuple,velocity_xy))}")
             self.updateXY()
+
+            # Matrix of particle position (x,y)
+            updateXY = np.column_stack((self.particle_x, self.particle_y))
+
+            print(f"Update (x,y) = {tuple(map(tuple,updateXY))}")
             print()
 
         print(f"Minimum value of f(x) = {fitness_function(self.gBest_x, self.gBest_y)}")
-
-    # Method to create table
-    def print_table(self, n):
-        particle_xy = np.column_stack((self.particle_x, self.particle_y))
-        pBest_xy = np.column_stack((self.pBest_x, self.pBest_y))
-        velocity_xy = np.column_stack((self.velocity_x, self.velocity_y))
-        updateXY = np.column_stack((self.particle_x, self.particle_y))
-        data = [
-            [f"Iteration {n}"],
-            ["Particles (x,y)", tuple(map(tuple, particle_xy))],
-            ["Determine fx", self.determineFunction()],
-            ["fx(pBest)", self.evaluatePbestFitness()],
-            [
-                "fx(gBest)",
-                fitness_function(self.gBest_x, self.gBest_y)
-                if self.gBest_x and self.gBest_y is not None
-                else None,
-            ],
-            ["Global Best (x,y)", (self.gBest_x, self.gBest_y)],
-            ["Personal Best (x,y)", tuple(map(tuple, pBest_xy))],
-            ["Velocity (x,y)", tuple(map(tuple, velocity_xy))],
-            ["Update (x,y)", tuple(map(tuple, updateXY))],
-        ]
-
-        headers = ["Swarm Optimization", "Value"]
-        print(tabulate(data, headers, tablefmt="grid"))
 
     def plot(self):
         plt.figure()
@@ -195,18 +204,14 @@ class fx_PSO_2D:
 
 # Main program
 if __name__ == "__main__":
-    xy_range = np.array([-5.12, 5.12])  # Range of particle (xMin, xMax)
+    # xy_range = np.array([-5.12, 5.12])  # Range of particle (xMin, xMax)
     dimension = 3  # Dimension of particle
-    particle_x = np.random.uniform(
-        xy_range[0], xy_range[1], dimension
-    )  # Generate particle x random particle
-    particle_y = np.random.uniform(
-        xy_range[0], xy_range[1], dimension
-    )  # Generate particle y random particle
+    particle_x = np.array([1.0, 1.0, 2.0])  # Generate particle x random particle
+    particle_y = np.array([1.0, -1.0, -1.0])  # Generate particle y random particle
     velocity_x = np.zeros(dimension)  # Initialize velocity x
     velocity_y = np.zeros(dimension)  # Initialize velocity y
     c = np.array([1.0, 0.5])  # Acceleration coefficient
-    r = np.array([np.random.rand(), np.random.rand()])  # Random number
+    r = np.array([0.5, 0.5])  # Random number
     w = 1.0  # Inertia weight
 
     pso = fx_PSO_2D(
