@@ -126,9 +126,7 @@ class fx_PSO_2D:
             self.findPbest()
             self.updateV()
 
-            print(f"Iteration {j + 1}")
             self.print_table(j + 1)
-            self.updateXY()
             print()
 
         print(f"Minimum value of f(x) = {fitness_function(self.gBest_x, self.gBest_y)}")
@@ -138,22 +136,37 @@ class fx_PSO_2D:
         particle_xy = np.column_stack((self.particle_x, self.particle_y))
         pBest_xy = np.column_stack((self.pBest_x, self.pBest_y))
         velocity_xy = np.column_stack((self.velocity_x, self.velocity_y))
+
+        rounded_particle = np.round(particle_xy, 3)
+        rounded_determine_fx = np.round(self.determineFunction(), 3)
+        rounded_fx_pBest = np.round(self.evaluatePbestFitness(), 3)
+        rounded_fx_gBest = (
+            np.round(fitness_function(self.gBest_x, self.gBest_y), 3)
+            if self.gBest_x is not None and self.gBest_y is not None
+            else None
+        )
+        rounded_gbest = (
+            np.round(np.array([self.gBest_x, self.gBest_y]), 3)
+            if self.gBest_x is not None and self.gBest_y is not None
+            else None
+        )
+        rounded_pBest = np.round(pBest_xy, 3)
+        rounded_velocity = np.round(velocity_xy, 3)
+        self.updateXY()
         updateXY = np.column_stack((self.particle_x, self.particle_y))
+        rounded_updateXY = np.round(updateXY, 3)
         data = [
             [f"Iteration {n}"],
-            ["Particles (x,y)", tuple(map(tuple, particle_xy))],
-            ["Determine fx", self.determineFunction()],
-            ["fx(pBest)", self.evaluatePbestFitness()],
-            [
-                "fx(gBest)",
-                fitness_function(self.gBest_x, self.gBest_y)
-                if self.gBest_x and self.gBest_y is not None
-                else None,
-            ],
-            ["Global Best (x,y)", (self.gBest_x, self.gBest_y)],
-            ["Personal Best (x,y)", tuple(map(tuple, pBest_xy))],
-            ["Velocity (x,y)", tuple(map(tuple, velocity_xy))],
-            ["Update (x,y)", tuple(map(tuple, updateXY))],
+            ["Particles (x,y)", tuple(map(tuple, rounded_particle))],
+            ["Determine fx", tuple(zip(rounded_determine_fx))],
+            ["fx(pBest)", tuple(zip(rounded_fx_pBest))],
+            ["fx(gBest)", rounded_fx_gBest],
+            ["Global Best (x,y)", tuple(zip(rounded_gbest))]
+            if rounded_gbest is not None
+            else ["Global Best (x,y)", None],
+            ["Personal Best (x,y)", tuple(map(tuple, rounded_pBest))],
+            ["Velocity (x,y)", tuple(map(tuple, rounded_velocity))],
+            ["Update (x,y)", tuple(map(tuple, rounded_updateXY))],
         ]
 
         headers = ["Swarm Optimization", "Value"]
@@ -208,7 +221,7 @@ if __name__ == "__main__":
     c = np.array([1.0, 0.5])  # Acceleration coefficient
     r = np.array([np.random.rand(), np.random.rand()])  # Random number
     w = 1.0  # Inertia weight
-    iterate = 10  # Iterate
+    iterate = 450  # Iterate
     pso = fx_PSO_2D(
         particle_x, particle_y, velocity_x, velocity_y, c, r, w
     )  # Create object

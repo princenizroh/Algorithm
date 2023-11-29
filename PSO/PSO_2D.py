@@ -205,7 +205,7 @@ class fx_PSO_2D:
 # Main program
 if __name__ == "__main__":
     # xy_range = np.array([-5.12, 5.12])  # Range of particle (xMin, xMax)
-    dimension = 3  # Dimension of particle
+    dimension = 10  # Dimension of particle
     particle_x = np.array([1.0, 1.0, 2.0])  # Generate particle x random particle
     particle_y = np.array([1.0, -1.0, -1.0])  # Generate particle y random particle
     velocity_x = np.zeros(dimension)  # Initialize velocity x

@@ -88,19 +88,22 @@ class fx_PSO:
 
     # Method to create table
     def print_table(self, n):
-        rounded_particle = np.round(self.particle, 4)
-        rounded_determine_fx = np.round(self.determineFunction(), 4)
-        rounded_fx_pBest = np.round(self.evaluatePbestFitness(), 4)
+        # Rounded value
+        rounded_particle = np.round(self.particle, 3)
+        rounded_determine_fx = np.round(self.determineFunction(), 3)
+        rounded_fx_pBest = np.round(self.evaluatePbestFitness(), 3)
         if self.gBest is not None:
-            rounded_fx_gBest = np.round(fitness_function(self.gBest), 4)
+            rounded_fx_gBest = np.round(fitness_function(self.gBest), 3)
             fx_gBest_str = str(rounded_fx_gBest)
         else:
             fx_gBest_str = None
-        rounded_gbest = np.round(self.gBest, 4) if self.gBest is not None else None
-        rounded_pBest = np.round(self.pBest, 4)
-        rounded_velocity = np.round(self.velocity, 4)
+        rounded_gbest = np.round(self.gBest, 3) if self.gBest is not None else None
+        rounded_pBest = np.round(self.pBest, 3)
+        rounded_velocity = np.round(self.velocity, 3)
         self.updateX()
-        rounded_updateX = np.round(self.particle, 4)
+        rounded_updateX = np.round(self.particle, 3)
+
+        # Data for table
         data = [
             [f"Iteration {n}"],
             ["Particle (x)", ", ".join(map(str, rounded_particle))],
@@ -117,8 +120,6 @@ class fx_PSO:
         ]
         headers = ["Variabel", "Value"]
         print(tabulate(data, headers, tablefmt="grid", colalign=("left", "right")))
-
-        # Add this method to the fx_PSO class
 
     def plot(self):
         # Generate data for visualization
@@ -169,7 +170,7 @@ if __name__ == "__main__":
         [np.random.rand(), np.random.rand()]
     )  # Random number (Between 0 and 1)
     w = 1.0  # Inertia weight
-    iterate = 10  # Iterate
+    iterate = 150  # Iterate
     pso = fx_PSO(particle, velocity, c, r, w)  # Create object
     pso.iterate(iterate)  # Iterate PSO
     pso.plot()  # Display visualization of PSO
