@@ -1,5 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+from mpl_toolkits.mplot3d import Axes3D
 
 # from typing import List
 
@@ -28,6 +30,9 @@ class fx_PSO:
         self.oldParticle = np.copy(particle)
         self.pBest = []
         self.gBest = None
+
+        # Flag untuk menandai iterasi pertama
+        self.first_iteration = True
 
     # Method to decide function value of particle position (x)
     def determineFunction(self) -> list[float]:
@@ -112,50 +117,91 @@ class fx_PSO:
         print(f"Minimum value of f(x) = {fitness_function(self.gBest)}")
 
     # Method to display visualization of PSO
-    def plot(self):
-        # Generate data for visualization
-        x_values = np.linspace(-5, 4, 3)
-        y_values = fitness_function(x_values)
-
-        # Plot the function
-        plt.plot(x_values, y_values, label="Fungsi Objektif", color="blue")
-
+    def plot_particles(self, ax):
         # Plot particle positions
-        plt.scatter(
+        ax.scatter(
             self.particle,
-            fitness_function(self.particle),
-            color="red",
-            label="Posisi Partikel",
+            [fitness_function(xi) for xi in self.particle],
+            c="b",
+            marker="o",
+            label="Particles",
+        )
+        ax.scatter(
+            self.gBest,
+            fitness_function(self.gBest),
+            c="r",
+            marker="o",
+            s=100,
+            label="Global Best",
         )
 
-        # Plot pBest positions
-        plt.scatter(self.pBest, self.determineFunction(), color="green", label="pBest")
+    # Fungsi untuk animasi iterasi
+    def animate(self, i, ax):
+        if self.first_iteration:
+            self.first_iteration = False
+        else:
+            # Print informasi untuk iterasi selanjutnya
+            self.findPbest()
+            self.findGbest()
+            self.updateV()
 
-        # Plot gBest position
-        plt.scatter(
-            self.gBest, fitness_function(self.gBest), color="blue", label="gBest"
+            print(f"Iterasi {i+1}")
+            print("Initialization")
+            # Update pBest, gBest, kecepatan, dan posisi untuk iterasi selanjutnya
+            print(f"Particle (x) = {[round(val, 3) for val in self.particle]}")
+            print(
+                f"Determine fx value = {[round(fitness_function(val), 3) for val in self.particle]}"
+            )
+            print(f"x = {[round(val, 3) for val in self.particle]}")
+            print(f"Personal Best = {[round(val, 3) for val in self.pBest]}")
+            print(f"Velocity = {[round(val, 3) for val in self.velocity]}")
+            # print(f"gBest = {round(self.gBest, 3)}")
+            self.updateX()
+            print(
+                f"f(x) = {[round(fitness_function(val), 3) for val in self.particle]}"
+            )
+            print()
+
+        # Menghapus plot sebelumnya dan memplot partikel serta gunung untuk iterasi saat ini
+        ax.clear()
+        self.plot_particles(ax)
+        self.plot_surface(ax)
+        ax.set_title(f"Iteration {i+1}")
+        # ax.set_xlim(-5, 5)
+        # ax.set_ylim(-5, 5)
+        ax.set_xlabel("X")
+        ax.set_ylabel("f(X)")
+        ax.legend()
+
+    # Fungsi untuk plotting permukaan fungsi objektif sebagai gunung
+    def plot_surface(self, ax):
+        x = np.linspace(-100, 100, 1000)
+        y = fitness_function(x)
+        ax.plot(x, y, color="purple", alpha=0.5, label="Objective Function")
+
+    # Fungsi untuk iterasi dengan animasi
+    def iterate_with_animation(self, n):
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection="3d")
+        animation = FuncAnimation(
+            fig, self.animate, frames=n, fargs=(ax,), interval=500, repeat=False
         )
-
-        # Configuration
-        plt.title("Visualisasi PSO")
-        plt.xlabel("Posisi")
-        plt.ylabel("Nilai Fungsi Objektif")
-        plt.legend()
-        plt.grid(True)
-        plt.savefig("fx-PSO.png")
         plt.show()
 
 
 # Main program
 if __name__ == "__main__":
     x = np.array([-5, 4])  # Range of particle (xMin, xMax)
-    dimension = 3  # Dimension of particle
-    particle = np.array([1.0, 2.0, 3.0])  # Generate random particle
+    dimension = 10  # Dimension of particle
+    # particle = np.array([1.0, 2.0, 3.0])  # Generate random particle
+    particle = np.random.uniform(x[0], x[1], dimension)
     velocity = np.zeros(dimension)  # Initialize velocity
     c = np.array([0.5, 1.0])  # Acceleration coefficient
     r = np.array([0.5, 0.5])  # Random number (Between 0 and 1)
     w = 1.0  # Inertia weight
     pso = fx_PSO(particle, velocity, c, r, w)  # Create object
-    pso.iterate(3)  # Iterate PSO
+    iterate = 10
+    pso.iterate(iterate)  # Iterate PSO
+    pso.iterate_with_animation(iterate)
     # Visualisasi
-    pso.plot()  # Display visualization
+    # pso.plot()  # Display visualization

@@ -81,37 +81,48 @@ class fx_PSO:
             self.findPbest()
             self.updateV()
 
-            print(f"Iteration {j + 1}")
             self.print_table(j + 1)
-            self.updateX()
             print()
 
         print(f"Minimum value of f(x) = {fitness_function(self.gBest)}")
 
     # Method to create table
     def print_table(self, n):
+        rounded_particle = np.round(self.particle, 4)
+        rounded_determine_fx = np.round(self.determineFunction(), 4)
+        rounded_fx_pBest = np.round(self.evaluatePbestFitness(), 4)
+        if self.gBest is not None:
+            rounded_fx_gBest = np.round(fitness_function(self.gBest), 4)
+            fx_gBest_str = str(rounded_fx_gBest)
+        else:
+            fx_gBest_str = None
+        rounded_gbest = np.round(self.gBest, 4) if self.gBest is not None else None
+        rounded_pBest = np.round(self.pBest, 4)
+        rounded_velocity = np.round(self.velocity, 4)
+        self.updateX()
+        rounded_updateX = np.round(self.particle, 4)
         data = [
             [f"Iteration {n}"],
-            ["Particle (x)", ", ".join(map(str, self.particle))],
-            ["Determine fx", ", ".join(map(str, self.determineFunction()))],
-            ["fx(pBest)", ", ".join(map(str, self.evaluatePbestFitness()))],
+            ["Particle (x)", ", ".join(map(str, rounded_particle))],
+            ["Determine fx", ", ".join(map(str, rounded_determine_fx))],
+            ["fx(pBest)", ", ".join(map(str, rounded_fx_pBest))],
+            ["fx(gBest)", fx_gBest_str],
             [
-                "fx(gBest)",
-                fitness_function(self.gBest) if self.gBest is not None else None,
+                "Global Best",
+                str(rounded_gbest) if rounded_gbest is not None else None,
             ],
-            ["Global Best", self.gBest],
-            ["Personal Best", ", ".join(map(str, self.pBest))],
-            ["Velocity", ", ".join(map(str, self.velocity))],
-            ["Update x", ", ".join(map(str, self.particle))],
+            ["Personal Best", ", ".join(map(str, rounded_pBest))],
+            ["Velocity", ", ".join(map(str, rounded_velocity))],
+            ["Update x", ", ".join(map(str, rounded_updateX))],
         ]
-
         headers = ["Variabel", "Value"]
-        print(tabulate(data, headers, tablefmt="grid"))
+        print(tabulate(data, headers, tablefmt="grid", colalign=("left", "right")))
 
-    # Method to display visualization of PSO
+        # Add this method to the fx_PSO class
+
     def plot(self):
         # Generate data for visualization
-        x_values = np.linspace(-5, 4, 3)
+        x_values = np.linspace(x_range[0], x_range[1], dimension)
         y_values = fitness_function(x_values)
 
         # Plot the function
@@ -126,11 +137,13 @@ class fx_PSO:
         )
 
         # Plot pBest positions
-        plt.scatter(self.pBest, self.determineFunction(), color="green", label="pBest")
+        plt.scatter(
+            self.pBest, self.determineFunction(), color="green", label="Personal Best"
+        )
 
         # Plot gBest position
         plt.scatter(
-            self.gBest, fitness_function(self.gBest), color="blue", label="gBest"
+            self.gBest, fitness_function(self.gBest), color="blue", label="Global Best"
         )
 
         # Configuration
@@ -145,16 +158,18 @@ class fx_PSO:
 
 # Main program
 if __name__ == "__main__":
-    x = np.array([-5, 4])  # Range of particle (xMin, xMax)
-    dimension = 3  # Dimension of particle
-    particle = np.random.uniform(x[0], x[1], dimension)  # Generate random particle
+    x_range = np.array([-5, 4])  # Range of particle (xMin, xMax)
+    dimension = 10  # Dimension of particle
+    particle = np.random.uniform(
+        x_range[0], x_range[1], dimension
+    )  # Generate random particle
     velocity = np.zeros(dimension)  # Initialize velocity
     c = np.array([0.5, 1.0])  # Acceleration coefficient
     r = np.array(
         [np.random.rand(), np.random.rand()]
     )  # Random number (Between 0 and 1)
     w = 1.0  # Inertia weight
+    iterate = 10  # Iterate
     pso = fx_PSO(particle, velocity, c, r, w)  # Create object
-    pso.iterate(3)  # Iterate PSO
-    # Visualisasi
-    pso.plot()  # Display visualization
+    pso.iterate(iterate)  # Iterate PSO
+    pso.plot()  # Display visualization of PSO

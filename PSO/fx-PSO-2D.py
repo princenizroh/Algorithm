@@ -157,11 +157,11 @@ class fx_PSO_2D:
         ]
 
         headers = ["Swarm Optimization", "Value"]
-        print(tabulate(data, headers, tablefmt="grid"))
+        print(tabulate(data, headers, tablefmt="grid", colalign=("left", "right")))
 
     def plot(self):
         plt.figure()
-        x_values = np.linspace(-5.12, 5.12, 3)
+        x_values = np.linspace(xy_range[0], xy_range[1], dimension)
         y_values = fitness_function(x_values, 0)
 
         plt.plot(x_values, y_values, label="Fungsi Objektif", color="blue")
@@ -179,10 +179,10 @@ class fx_PSO_2D:
             pBest_positions[:, 0],
             pBest_positions[:, 1],
             color="green",
-            label="pBest",
+            label="Personal Best",
         )
 
-        plt.scatter(self.gBest_x, self.gBest_y, color="blue", label="gBest")
+        plt.scatter(self.gBest_x, self.gBest_y, color="blue", label="Global Best")
 
         plt.title("Visualisasi PSO")
         plt.xlabel("Posisi X")
@@ -196,7 +196,7 @@ class fx_PSO_2D:
 # Main program
 if __name__ == "__main__":
     xy_range = np.array([-5.12, 5.12])  # Range of particle (xMin, xMax)
-    dimension = 3  # Dimension of particle
+    dimension = 10  # Dimension of particle
     particle_x = np.random.uniform(
         xy_range[0], xy_range[1], dimension
     )  # Generate particle x random particle
@@ -208,9 +208,9 @@ if __name__ == "__main__":
     c = np.array([1.0, 0.5])  # Acceleration coefficient
     r = np.array([np.random.rand(), np.random.rand()])  # Random number
     w = 1.0  # Inertia weight
-
+    iterate = 10  # Iterate
     pso = fx_PSO_2D(
         particle_x, particle_y, velocity_x, velocity_y, c, r, w
     )  # Create object
-    pso.iterate(3)  # Iterate PSO
+    pso.iterate(iterate)  # Iterate PSO
     pso.plot()  # Display visualization of PSO
