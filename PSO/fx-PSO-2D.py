@@ -133,10 +133,12 @@ class fx_PSO_2D:
 
     # Method to create table
     def print_table(self, n):
+        # Stack 1-D arrays as columns into a 2-D array.
         particle_xy = np.column_stack((self.particle_x, self.particle_y))
         pBest_xy = np.column_stack((self.pBest_x, self.pBest_y))
         velocity_xy = np.column_stack((self.velocity_x, self.velocity_y))
 
+        # Rounded value
         rounded_particle = np.round(particle_xy, 3)
         rounded_determine_fx = np.round(self.determineFunction(), 3)
         rounded_fx_pBest = np.round(self.evaluatePbestFitness(), 3)

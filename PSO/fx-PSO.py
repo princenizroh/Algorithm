@@ -121,6 +121,7 @@ class fx_PSO:
         headers = ["Variabel", "Value"]
         print(tabulate(data, headers, tablefmt="grid", colalign=("left", "right")))
 
+    # Method to display visualization of PSO
     def plot(self):
         # Generate data for visualization
         x_values = np.linspace(x_range[0], x_range[1], dimension)
