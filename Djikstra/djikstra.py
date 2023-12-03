@@ -1,5 +1,4 @@
 import sys
-import tabulate
 
 
 class Graph(object):
@@ -25,11 +24,7 @@ class Graph(object):
         return self.nodes
 
     def get_outgoing_edges(self, node):
-        connections = []
-        for out_node in self.nodes:
-            if self.graph[node].get(out_node, False) != False:
-                connections.append(out_node)
-        return connections
+        return list(self.graph[node].keys())
 
     def value(self, node1, node2):
         "Returns the value of an edge between two nodes."
@@ -61,14 +56,22 @@ class Graph(object):
                     shortest_distance[neighbor] = distance
                     previous_nodes[neighbor] = current_min_node
             unvisited_node.remove(current_min_node)
+            print("Current Min Node:", current_min_node)
         return previous_nodes, shortest_distance
 
     def print_result(self, previous_nodes, shortest_distance, start_node, target_node):
+        if target_node not in shortest_distance:
+            print("There is no path from {} to {}".format(start_node, target_node))
+            return
+
         path = []
         node = target_node
 
         while node != start_node:
             path.append(node)
+            if node not in previous_nodes:
+                print("Error: No path found from {} to {}".format(start_node, target_node))
+                return
             node = previous_nodes[node]
 
         # Add the start node manually
@@ -82,19 +85,30 @@ class Graph(object):
         print(" -> ".join(reversed(path)))
 
 
-nodes = ["A", "B", "C", "D", "E", "F"]
+nodes = ["A", "B", "C", "D", "E", "F", "G"]
 init_graph = {
-    "A": {"B": 3, "C": 4, "D": 5, "E": 9},
-    "B": {"C": 5},
-    "D": {"C": 2, "F": 3},
-    "C": {"E": 2, "F": 2},
-    "E": {"F": 3},
+    "A": {"B": 5, "C": 7, "D": 12},
+    "B": {"A": 5, "C": 1, "E": 6},
+    "C": {"A": 7, "B": 1, "D": 1, "E": 5, "F": 4},
+    "D": {"A": 12, "C": 1, "F": 13},
+    "E": {"B": 6, "C": 5, "F": 2, "G": 7},
+    "F": {"D": 13, "C": 4, "E": 2, "G": 3},
+    "G": {"E": 7, "F": 3},
 }
 my_graph = Graph(nodes, init_graph)
 previous_nodes, shortest_distance = my_graph.dijkstra(my_graph, "A")
 my_graph.print_result(
-    previous_nodes, shortest_distance, start_node="A", target_node="F"
+    previous_nodes, shortest_distance, start_node="A", target_node="G"
 )
+# Setelah inisialisasi shortest_distance
+print("Initial Shortest Distance:", shortest_distance)
+
+# Sebelum menghapus current_min_node dari unvisited_node
+print("Shortest Distance:", shortest_distance)
+
+# Sebelum menghapus current_min_node dari unvisited_node
+print("Previous Nodes:", previous_nodes)
+
 # nodes = ["Reykjavik", "Oslo", "Moscow", "London", "Rome", "Berlin", "Belgrade", "Athens"]
 
 # init_graph = {}

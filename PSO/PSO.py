@@ -167,8 +167,6 @@ class fx_PSO:
         self.plot_particles(ax)
         self.plot_surface(ax)
         ax.set_title(f"Iteration {i+1}")
-        # ax.set_xlim(-5, 5)
-        # ax.set_ylim(-5, 5)
         ax.set_xlabel("X")
         ax.set_ylabel("f(X)")
         ax.legend()
