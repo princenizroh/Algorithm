@@ -1,60 +1,75 @@
-import sys
 from tabulate import tabulate
 import networkx as nx
 import matplotlib.pyplot as plt
 
-
+# Create a graph class
 class Graph(object):
-    def __init__(self, nodes, init_graph):
+    # Constructor for the graph
+    def __init__(self, nodes:list, init_graph:dict)->None:
         self.nodes = nodes
         self.graph = self.construct_graph(nodes, init_graph)
-
-    def construct_graph(self, nodes, init_graph):
+    
+    # Construct the graph  
+    def construct_graph(self, nodes, init_graph)->dict:
         graph = {}
         for node in nodes:
             graph[node] = {}
         graph.update(init_graph)
-        print(graph)
 
+        # Check if the graph is symmetric
         for node, edges in graph.items():
             for adjacent_node, value in edges.items():
+                # If the graph is not symmetric, add the reverse edge
                 if graph[adjacent_node].get(node, False) == False:
                     graph[adjacent_node][node] = value
-
         return graph
 
-    def get_nodes(self):
+    # Get the nodes
+    def get_nodes(self)->list:
         return self.nodes
 
-    def get_outgoing_edges(self, node):
+    # Get the edges
+    def get_edges(self, node)->list:
         return list(self.graph[node].keys())
 
-    def value(self, node1, node2):
+    # Get the value of the edges
+    def get_value(self, node1, node2)->int:
         return self.graph[node1][node2]
 
-    def dijkstra(self, start_node):
-        unvisited_nodes = set(self.nodes)
-        shortest_distance = {node: sys.maxsize for node in unvisited_nodes}
+    # Dijkstra's algorithm
+    def dijkstra(self, start_node)->None:
+        # Initialize the algorithm
+        unvisited_nodes = sorted(self.get_nodes())
+        shortest_distance = {node:float("inf") for node in unvisited_nodes}
         previous_nodes = {}
 
+        # Initialize the distance of the start node to 0
         for node in unvisited_nodes:
-            shortest_distance[node] = sys.maxsize
+            shortest_distance[node] = float("inf")
+            print(shortest_distance[node])
         shortest_distance[start_node] = 0
 
         iteration = 1
 
+        # Start the algorithm
         while unvisited_nodes:
             current_min_node = None
+
+            # Find the node with the shortest distance
             for node in unvisited_nodes:
                 if (
                     current_min_node is None
                     or shortest_distance[node] < shortest_distance[current_min_node]
                 ):
+                    print("shortest distance",shortest_distance[node])
                     current_min_node = node
 
-            neighbors = self.get_outgoing_edges(current_min_node)
+            # Find the distance from the current node to its neighbors
+            neighbors = self.get_edges(current_min_node)
+
+            # Update the distance of the neighbors
             for neighbor in neighbors:
-                distance = shortest_distance[current_min_node] + self.value(
+                distance = shortest_distance[current_min_node] + self.get_value(
                     current_min_node, neighbor
                 )
                 if distance < shortest_distance[neighbor]:
@@ -63,6 +78,7 @@ class Graph(object):
 
             unvisited_nodes.remove(current_min_node)
 
+            # Print the result of the current iteration
             print(f"\nStep {iteration}:")
             print(
                 f"Now we need to start checking the distance from node {current_min_node} to its adjacent nodes."
@@ -80,7 +96,7 @@ class Graph(object):
 
             result_table = [
                 [node, shortest_distance[node]]
-                if node in shortest_distance and shortest_distance[node] != sys.maxsize
+                if node in shortest_distance and shortest_distance[node] != float("inf")
                 else [node, "∞"]
                 for node in self.nodes
             ]
@@ -91,10 +107,12 @@ class Graph(object):
 
             iteration += 1
 
+        # Print the final result
         self.shortest_distance = shortest_distance
         self.previous_nodes = previous_nodes
 
-    def print_result(self, target_node):
+    # Print the result
+    def print_result(self, target_node)->None:
         unvisited_nodes = set(self.nodes)
 
         start_node = nodes[0]
@@ -121,6 +139,7 @@ class Graph(object):
 
         print(" -> ".join(reversed(path)))
 
+    # Visualize the graph
     def visualize(self):
         G = nx.DiGraph()
 
@@ -168,9 +187,10 @@ init_graph = {
 # }
 
 my_graph = Graph(nodes, init_graph)
+my_graph.dijkstra("A")
 # my_graph.dijkstra("Tempest")
 # my_graph.print_result(target_node="Dwargon")
 
-my_graph.dijkstra("A")
-my_graph.print_result(target_node="G")
-my_graph.visualize()
+# my_graph.dijkstra("A")
+# my_graph.print_result(target_node="G")
+# my_graph.visualize()
