@@ -187,10 +187,9 @@ init_graph = {
 # }
 
 my_graph = Graph(nodes, init_graph)
-my_graph.dijkstra("A")
 # my_graph.dijkstra("Tempest")
 # my_graph.print_result(target_node="Dwargon")
 
-# my_graph.dijkstra("A")
-# my_graph.print_result(target_node="G")
+my_graph.dijkstra("A")
+my_graph.print_result(target_node="G")
 # my_graph.visualize()
