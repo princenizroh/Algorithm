@@ -1,13 +1,22 @@
 from tabulate import tabulate
+from typing import List, Dict
 import networkx as nx
 import matplotlib.pyplot as plt
 
+Graph = Dict[str, Dict[str, int]]
 # Create a graph class
-class Graph(object):
+class Djikstra(object):
     # Constructor for the graph
-    def __init__(self, nodes:list, init_graph:dict)->None:
+    def __init__(self, nodes: List[str], graph: Graph, source: str) -> None:
         self.nodes = nodes
-        self.graph = self.construct_graph(nodes, init_graph)
+        self.graph = graph
+        self.source = source
+
+        self.unvisited_nodes = sorted(self.nodes)
+        self.shortest_distance = {node: float("inf") for node in self.unvisited_nodes}
+        self.shortest_distance[source] = 0
+        self.previous_nodes = {source: source}
+        self.history = []
     
     # Construct the graph  
     def construct_graph(self, nodes, init_graph)->dict:
