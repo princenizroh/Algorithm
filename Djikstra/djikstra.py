@@ -86,6 +86,7 @@ class Dijkstra(object):
         path.append(self.source)
         print(" -> ".join(reversed(path)))
 
+        print(f"Found the folowing best path {self.source} to {destination} with a value of {self.shortest_distance[destination]}.")
     # Visualize the graph
     def visualize(self):
         G = nx.DiGraph()
