@@ -107,7 +107,7 @@ class Dijkstra(object):
 
         # Color nodes and edges based on whether they are in the shortest path
         node_colors = ["red" if node in path else "skyblue" for node in G.nodes]
-        edge_colors = ["red" if edge in path_edge else "skyblue" for edge in G.edges]
+        edge_colors = ["red" if edge in path_edge else "black" for edge in G.edges]
 
         nx.draw(
             G,
@@ -126,7 +126,7 @@ class Dijkstra(object):
         # Draw labels for nodes in the shortest path
         nx.draw_networkx_labels(G, pos, labels={node: node for node in path}, font_color="white", font_weight="bold")
 
-        nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_color="red")
+        nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_color="red", font_size=16)
 
         plt.title("Graph Visualization")
         plt.show()
