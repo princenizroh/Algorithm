@@ -47,17 +47,6 @@ class Dijkstra(object):
             self.unvisited_nodes.remove(current_min_node)
 
     def table_1(self) -> None:
-        data = [[self.source, 0, "-"]]
-        for node in self.nodes:
-            if node == self.source:
-                continue
-            shortestDist = self.shortest_distance[node]
-            prevNode = self.previous_nodes[node]
-            data.append([node, shortestDist, prevNode])
-        print(tabulate(data, ["Node", "Shortest", "Previous"], tablefmt="fancy_grid"))
-
-
-    def table_2(self) -> None:
         data = []
         for historyItem in self.history:
             row = [historyItem[0]]
@@ -69,6 +58,16 @@ class Dijkstra(object):
             data.append(row)
 
         print(tabulate(data, ["V", *nodes], tablefmt="fancy_grid"))
+
+    def table_2(self) -> None:
+        data = [[self.source, 0, "-"]]
+        for node in self.nodes:
+            if node == self.source:
+                continue
+            shortestDist = self.shortest_distance[node]
+            prevNode = self.previous_nodes[node]
+            data.append([node, shortestDist, prevNode])
+        print(tabulate(data, ["Node", "Shortest", "Previous"], tablefmt="fancy_grid"))
 
     def construct_path(self, destination) -> None:
         if destination not in self.shortest_distance:
