@@ -46,7 +46,7 @@ class Dijkstra(object):
             )
             self.unvisited_nodes.remove(current_min_node)
 
-    def table(self) -> None:
+    def table_1(self) -> None:
         data = [[self.source, 0, "-"]]
         for node in self.nodes:
             if node == self.source:
@@ -57,7 +57,7 @@ class Dijkstra(object):
         print(tabulate(data, ["Node", "Shortest", "Previous"], tablefmt="fancy_grid"))
 
 
-    def dimpram(self) -> None:
+    def table_2(self) -> None:
         data = []
         for historyItem in self.history:
             row = [historyItem[0]]
@@ -102,7 +102,6 @@ class Dijkstra(object):
         nx.draw(
             G,
             pos,
-            with_labels=True,
             node_size=700,
             node_color="skyblue",
             font_size=8,
@@ -131,7 +130,7 @@ if __name__ == "__main__":
     dijkstra = Dijkstra(nodes, init_graph, "A")
 
     dijkstra.start()
-    dijkstra.table()
-    dijkstra.dimpram()
+    dijkstra.table_1()
+    dijkstra.table_2()
     dijkstra.construct_path(destination)
     dijkstra.visualize()
