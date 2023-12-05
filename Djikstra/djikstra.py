@@ -129,7 +129,9 @@ if __name__ == "__main__":
     dijkstra = Dijkstra(nodes, init_graph, "A")
 
     dijkstra.start()
+    print("Table_1.from A to other Nodes step-by-step")
     dijkstra.table_1()
+    print("Table_2.from A to other Nodes")
     dijkstra.table_2()
     dijkstra.construct_path(destination)
     dijkstra.visualize()
