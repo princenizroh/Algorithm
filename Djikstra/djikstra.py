@@ -69,49 +69,61 @@ class Dijkstra(object):
             data.append([node, shortestDist, prevNode])
         print(tabulate(data, ["Node", "Shortest", "Previous"], tablefmt="fancy_grid"))
 
-    def construct_path(self, destination) -> None:
+    def construct_path(self, destination) :
         if destination not in self.shortest_distance:
-            return print(f"Path dari {self.source} ke {destination} tidak ditemukan")
-
+            return print(f"Path from {self.source} to {destination} not found")
+        
         path = []
 
         node = destination
         while node != self.source:
             path.append(node)
             if node not in self.previous_nodes:
-                return print(f"Path dari {self.source} ke {destination} tidak ditemukan")
+                return print(f"Path from {self.source} to {destination} not found")
             node = self.previous_nodes[node]
 
         path.append(self.source)
         print(" -> ".join(reversed(path)))
 
         print(f"Found the folowing best path {self.source} to {destination} with a value of {self.shortest_distance[destination]}.")
+        return path
+
     # Visualize the graph
-    def visualize(self):
+    def visualize(self, path) -> None:
         G = nx.DiGraph()
 
         for node, edges in self.graph.items():
             for neighbor, value in edges.items():
                 G.add_edge(node, neighbor, weight=value)
 
-        pos = nx.spring_layout(G)
+        # Specify node positions manually
+        pos = {"A": (0, 0), "B": (1, 1), "C": (2, 0), "D": (1, -1), "E": (3, 1), "F": (3, -1), "G": (4, 0)}
+
         edge_labels = nx.get_edge_attributes(G, "weight")
-        node_labels = {node: node for node in G.nodes}
+
+        # Color nodes and edges based on whether they are in the shortest path
+        node_colors = ["red" if node in path else "skyblue" for node in G.nodes]
 
         nx.draw(
             G,
             pos,
             node_size=700,
-            node_color="skyblue",
+            node_color=node_colors,
             font_size=8,
             font_color="black",
+            with_labels=False,
         )
+
+        # Draw labels for all nodes
+        nx.draw_networkx_labels(G, pos, font_color="black")
+
+        # Draw labels for nodes in the shortest path
+        nx.draw_networkx_labels(G, pos, labels={node: node for node in path}, font_color="white", font_weight="bold")
+
         nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_color="red")
-        nx.draw_networkx_labels(G, pos, labels=node_labels, font_color="white")
 
         plt.title("Graph Visualization")
         plt.show()
-
 
 if __name__ == "__main__":
     nodes = ["A", "B", "C", "D", "E", "F", "G"]
@@ -125,13 +137,11 @@ if __name__ == "__main__":
         "G": {},
     }
     destination = "G"
-
     dijkstra = Dijkstra(nodes, init_graph, "A")
-
     dijkstra.start()
     print("Table_1.from A to other Nodes step-by-step")
     dijkstra.table_1()
     print("Table_2.from A to other Nodes")
     dijkstra.table_2()
-    dijkstra.construct_path(destination)
-    dijkstra.visualize()
+    path = dijkstra.construct_path(destination)
+    dijkstra.visualize(path)
