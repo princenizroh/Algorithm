@@ -74,16 +74,12 @@ class Dijkstra(object):
             return print(f"Path from {self.source} to {destination} not found")
         
         path = []
-        
-        global path_edge
-        path_edge = []
 
         node = destination
         while node != self.source:
             path.append(node)
             if node not in self.previous_nodes:
                 return print(f"Path from {self.source} to {destination} not found")
-            path_edge.append((self.previous_nodes[node], node))
             node = self.previous_nodes[node]
 
         path.append(self.source)
@@ -105,9 +101,11 @@ class Dijkstra(object):
 
         edge_labels = nx.get_edge_attributes(G, "weight")
 
+        path_edges = [(path[i], path[i-1]) for i in range(1, len(path))]
+
         # Color nodes and edges based on whether they are in the shortest path
         node_colors = ["red" if node in path else "skyblue" for node in G.nodes]
-        edge_colors = ["red" if edge in path_edge else "black" for edge in G.edges]
+        edge_colors = ["red" if edge in path_edges else "black" for edge in G.edges]
 
         nx.draw(
             G,
@@ -149,5 +147,6 @@ if __name__ == "__main__":
     dijkstra.table_1()
     print("Table_2.from A to other Nodes")
     dijkstra.table_2()
+
     path = dijkstra.construct_path(destination)
     dijkstra.visualize(path)
