@@ -74,12 +74,16 @@ class Dijkstra(object):
             return print(f"Path from {self.source} to {destination} not found")
         
         path = []
+        
+        global path_edge
+        path_edge = []
 
         node = destination
         while node != self.source:
             path.append(node)
             if node not in self.previous_nodes:
                 return print(f"Path from {self.source} to {destination} not found")
+            path_edge.append((self.previous_nodes[node], node))
             node = self.previous_nodes[node]
 
         path.append(self.source)
@@ -103,6 +107,7 @@ class Dijkstra(object):
 
         # Color nodes and edges based on whether they are in the shortest path
         node_colors = ["red" if node in path else "skyblue" for node in G.nodes]
+        edge_colors = ["red" if edge in path_edge else "skyblue" for edge in G.edges]
 
         nx.draw(
             G,
@@ -111,6 +116,7 @@ class Dijkstra(object):
             node_color=node_colors,
             font_size=8,
             font_color="black",
+            edge_color=edge_colors,
             with_labels=False,
         )
 
