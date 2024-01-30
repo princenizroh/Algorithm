@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 # Define the graph type
 Graph = Dict[str, Dict[str, int]]
 
+
 # Create a graph class
 class Dijkstra(object):
     # Constructor for the graph
@@ -14,13 +15,13 @@ class Dijkstra(object):
         self.graph = graph
         self.source = source
 
-        self.unvisited_nodes = sorted(self.nodes)
+        self.unvisited_nodes = list(self.nodes)
         self.shortest_distance = {node: float("inf") for node in self.unvisited_nodes}
         self.shortest_distance[source] = 0
         self.previous_nodes = {source: source}
         self.history = []
 
-    # Start the Algorithm and calculate the shortest path 
+    # Start the Algorithm and calculate the shortest path
     def start(self) -> None:
         while self.unvisited_nodes:
             current_min_node = self.unvisited_nodes[0]
@@ -50,10 +51,10 @@ class Dijkstra(object):
             self.unvisited_nodes.remove(current_min_node)
 
     # Construct the path from source to destination
-    def construct_path(self, destination) :
+    def construct_path(self, destination):
         if destination not in self.shortest_distance:
             return print(f"Path from {self.source} to {destination} not found")
-        
+
         path = []
 
         node = destination
@@ -66,10 +67,12 @@ class Dijkstra(object):
         path.append(self.source)
         print(" -> ".join(reversed(path)))
 
-        print(f"Found the folowing best path {self.source} to {destination} with a value of {self.shortest_distance[destination]}.")
+        print(
+            f"Found the folowing best path {self.source} to {destination} with a value of {self.shortest_distance[destination]}."
+        )
         return path
 
-    # Print the tables step-by-step 
+    # Print the tables step-by-step
     def table_1(self) -> None:
         data = []
         for historyItem in self.history:
@@ -102,11 +105,19 @@ class Dijkstra(object):
             for neighbor, value in edges.items():
                 G.add_edge(node, neighbor, weight=value)
 
-        pos = {"A": (0, 0), "B": (1, 1), "C": (2, 0), "D": (1, -1), "E": (3, 1), "F": (3, -1), "G": (4, 0)}
+        pos = {
+            "A": (0, 0),
+            "B": (1, 1),
+            "C": (2, 0),
+            "D": (1, -1),
+            "E": (3, 1),
+            "F": (3, -1),
+            "G": (4, 0),
+        }
 
         edge_labels = nx.get_edge_attributes(G, "weight")
 
-        path_edges = [(path[i], path[i-1]) for i in range(1, len(path))]
+        path_edges = [(path[i], path[i - 1]) for i in range(1, len(path))]
 
         # Color nodes and edges based on whether they are in the shortest path
         node_colors = ["red" if node in path else "skyblue" for node in G.nodes]
@@ -125,16 +136,28 @@ class Dijkstra(object):
         )
 
         # Draw labels for all nodes
-        nx.draw_networkx_labels(G, pos, font_color="black", font_weight="bold", font_size=16)
+        nx.draw_networkx_labels(
+            G, pos, font_color="black", font_weight="bold", font_size=16
+        )
 
         # Draw labels for nodes in the shortest path
-        nx.draw_networkx_labels(G, pos, labels={node: node for node in path}, font_color="white", font_weight="bold", font_size=16)
+        nx.draw_networkx_labels(
+            G,
+            pos,
+            labels={node: node for node in path},
+            font_color="white",
+            font_weight="bold",
+            font_size=16,
+        )
 
         # Draw edge labels
-        nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_color="red", font_size=16)
+        nx.draw_networkx_edge_labels(
+            G, pos, edge_labels=edge_labels, font_color="red", font_size=16
+        )
 
         plt.title("Graph Visualization")
         plt.show()
+
 
 if __name__ == "__main__":
     nodes = ["A", "B", "C", "D", "E", "F", "G"]
@@ -156,4 +179,4 @@ if __name__ == "__main__":
     dijkstra.table_2()
 
     path = dijkstra.construct_path(destination)
-    dijkstra.visualize(path) # Visualize the graph
+    dijkstra.visualize(path)  # Visualize the graph
